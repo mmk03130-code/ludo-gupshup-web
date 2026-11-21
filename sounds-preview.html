@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ludo Gupshup — Real Sounds Preview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: #1e7a3c; color: #fff; padding: 18px 14px 40px; }
+  h1 { font-size: 24px; text-align: center; color: #ffd94d; text-shadow: 0 2px 0 rgba(0,0,0,.3); }
+  .sub { text-align: center; color: #d9f2dd; font-size: 14px; margin: 6px 0 18px; }
+  .card { background: #fff8e6; color: #3a2a12; border-radius: 14px; padding: 12px 14px; margin: 0 auto 10px; max-width: 560px; display: flex; align-items: center; gap: 12px; box-shadow: 0 3px 0 rgba(0,0,0,.25); }
+  .play { flex: 0 0 52px; width: 52px; height: 52px; border-radius: 50%; border: none; background: #f5b301; color: #fff; font-size: 22px; cursor: pointer; box-shadow: 0 2px 0 #b97f00; }
+  .play:active { transform: translateY(2px); box-shadow: none; }
+  .info { flex: 1; min-width: 0; }
+  .name { font-weight: 700; font-size: 16px; }
+  .when { font-size: 13px; color: #7a5c1e; }
+  .src { font-size: 11px; color: #a08a5a; margin-top: 2px; }
+  .src a { color: #a08a5a; }
+  .dur { font-size: 12px; color: #7a5c1e; white-space: nowrap; }
+  .note { max-width: 560px; margin: 18px auto 0; font-size: 13px; color: #d9f2dd; text-align: center; line-height: 1.5; }
+  .note b { color: #ffd94d; }
+</style>
+</head>
+<body>
+<h1>🎲 Ludo Gupshup — Sounds</h1>
+<p class="sub">Tap ▶ to hear each real sound. Pick the ones you like.</p>
+<div id="list"></div>
+<p class="note">All sounds are <b>CC0 (public domain)</b> from Freesound — free to use in the game, no credit needed, nobody's name goes in the app. Two music loops are here so you can pick one.</p>
+<script>
+const sounds = [
+  { file: "dice_roll.wav",      name: "Dice roll",        when: "When the dice shakes and rolls",            src: "rolling dice 1 — nettimato",        id: 353975 },
+  { file: "hop.wav",            name: "Token hop",        when: "Each step a token hops",                   src: "SingleKnock_Wood — NoisyRedFox",    id: 742356 },
+  { file: "capture.wav",        name: "Token captured",   when: "When a token kills another",               src: "swoosh — lesaucisson + chop — dave.des", id: 585257 },
+  { file: "six.wav",            name: "Rolled a 6",       when: "Celebration chime for rolling a 6",        src: "Celesta Chime Descending — Qvantor", id: 879801 },
+  { file: "win.wav",            name: "You win",          when: "Win fanfare at the end of a game",         src: "Fanfare — Arcorias",                id: 770801 },
+  { file: "lose.wav",           name: "You lose",         when: "Sad trombone when you lose",               src: "wah wah sad trombone — kirbydx",    id: 175409 },
+  { file: "coin.wav",           name: "Coins",            when: "Coins rewarded, quest claimed",            src: "Coin_Drop_26 — Valenspire",         id: 699521 },
+  { file: "click.wav",          name: "Button click",     when: "Tapping any button",                       src: "Videogame Menu BUTTON CLICK — Christopherderp", id: 342200 },
+  { file: "pop.wav",            name: "Emoji pop",        when: "Sending an emoji or chat bubble",          src: "UI Bubble Pop — Qvantor",           id: 878245 },
+  { file: "turn.wav",           name: "Turn change",      when: "Soft tick when the turn passes",           src: "Metronome 2kHz — unfa",             id: 243748 },
+  { file: "spin.wav",           name: "Wheel spin",       when: "Spinning the reward wheel",                src: "Wheel Spin Click Slow Down Fast — pooky1", id: 398236 },
+  { file: "music_loop.wav",     name: "Music A — Happy",  when: "Background music, cheerful loop (18s)",    src: "BirdFish Happy Loop — pinkinblue",  id: 425971 },
+  { file: "music_loop_alt.wav", name: "Music B — Calm",   when: "Background music, calm loop (19s)",        src: "Calm — wi-photos",                  id: 504987 },
+];
+const list = document.getElementById("list");
+let current = null;
+sounds.forEach(s => {
+  const audio = new Audio("sounds/" + s.file);
+  audio.preload = "auto";
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = '<button class="play">▶</button>' +
+    '<div class="info"><div class="name"></div><div class="when"></div>' +
+    '<div class="src">Freesound CC0 · <a target="_blank" rel="noopener"></a></div></div>' +
+    '<div class="dur"></div>';
+  card.querySelector(".name").textContent = s.name;
+  card.querySelector(".when").textContent = s.when;
+  card.querySelector(".src").firstChild.textContent = "";
+  const a = card.querySelector(".src a");
+  a.textContent = s.src;
+  a.href = "https://freesound.org/s/" + s.id + "/";
+  const btn = card.querySelector(".play");
+  audio.addEventListener("loadedmetadata", () => {
+    card.querySelector(".dur").textContent = audio.duration.toFixed(1) + "s";
+  });
+  audio.addEventListener("ended", () => { btn.textContent = "▶"; if (current === audio) current = null; });
+  btn.addEventListener("click", () => {
+    if (current && current !== audio) { current.pause(); current.currentTime = 0; }
+    if (audio.paused) { audio.currentTime = 0; audio.play(); btn.textContent = "⏸"; current = audio; }
+    else { audio.pause(); btn.textContent = "▶"; current = null; }
+  });
+  list.appendChild(card);
+});
+</script>
+</body>
+</html>
